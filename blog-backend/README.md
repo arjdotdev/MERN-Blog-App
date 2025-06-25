@@ -97,3 +97,5 @@ Ways to run MongoDB:
 a. locally via Docker: docker installs mongoDB for you inside an isloated environment. It spins up a new container from that image (which are minimal Linux userland and mongodb binary). Inside the container, it runs mongodb. You do not install MongoDB on your OS but the container has everything it needs.
 b. locally by installing MongoDB //resource heavy and slows laptop
 c. MongoDB Atlas
+
+Step 3: Create a User Schema

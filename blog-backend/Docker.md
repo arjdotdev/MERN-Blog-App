@@ -10,6 +10,9 @@ docker run -d `
 -v blog-mongo-data:/data/db`
 mongo:6
 
+Or
+docker run -d --name blog-mongo -p 27017:27017 -v blog-mongo-data:/data/db mongo:6
+
 -d => detached mode (runs in background)
 --name blog-mongo => container name
 -p 27017:27017 => expose container's port 27-17 on localhost
@@ -25,3 +28,9 @@ localhost:27017 → Docker maps this to your Mongo container.
 /blog → the database name (auto-created on first write).
 
 Successfully Connected
+
+Running through Docker Desktop
+
+1. Search for the image > pull
+2. Run the image > you will container form
+3. Give a "name" for container > Enter "Host Port" > Enter Paths ("Host Path" & "Container Path")
