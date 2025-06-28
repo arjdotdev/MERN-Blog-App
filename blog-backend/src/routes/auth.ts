@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
+import { requireAuth, AuthRequest } from "../middleware/auth";
 // User is Mongoose model
 import { config } from "dotenv";
 config();

@@ -1,89 +1,3 @@
-Scaffold & Tooling (4–6 hrs)
-
-Backend: TypeScript + Express + dotenv + Mongoose + “Hello world” endpoint
-
-Frontend: CRA (TS) + Tailwind + basic router setup
-
-Verify health endpoints and styling
-
-Database & Auth (6–8 hrs)
-
-Connect to MongoDB, define User schema
-
-/api/auth/register & /api/auth/login endpoints
-
-Password hashing (bcrypt) + JWT issuance
-
-Auth UI & State (6–8 hrs)
-
-Build signup/login forms (no lib)
-
-Wire up Context API for auth state
-
-Persist token (HTTP-only cookie or localStorage)
-
-Posts Backend CRUD (6–8 hrs)
-
-Define Post schema (title, body, author, timestamps)
-
-POST/GET/PUT/DELETE /api/posts endpoints with population
-
-Posts Frontend (8–10 hrs)
-
-List, detail, create/edit/delete pages
-
-Fetch data via fetch or axios, update Context
-
-Comments Feature (6–8 hrs)
-
-Comment schema & endpoints (/api/posts/:id/comments)
-
-UI to add/list comments under a post
-
-Routing & Code-Splitting (4–6 hrs)
-
-Organize routes with react-router-dom
-
-Lazy-load heavy pages using React.lazy + Suspense
-
-Basic Testing (4–6 hrs)
-
-React Testing Library: a few unit tests for forms & context
-
-Jest (or supertest) for one or two backend routes
-
-Docker & Docker Compose (4 hrs)
-
-Dockerfile for both services
-
-Compose file for backend + Mongo + frontend (optional)
-
-CI/CD with GitHub Actions (6 hrs)
-
-Lint, type-check, test on each PR
-
-Build & push Docker images to registry
-
-AWS Deployment (6–8 hrs)
-
-Push images to ECR
-
-Deploy to ECS Fargate (or Elastic Beanstalk)
-
-Configure env vars via Secrets Manager
-
-Social Login & Final Polishing (6 hrs)
-
-Add Google OAuth to your JWT flow (later swap in Auth0 if desired)
-
-Clean up UI, fix edge-case bugs, add final tests
-
-Buffer & Bugfixes (8 hrs)
-
-Address any unexpected blockers
-
-Polish UX, handle error states, finalize README
-
 npm install express jsonwebtoken bcrypt mongoose
 
 What is mongoose?
@@ -186,3 +100,77 @@ Note: We never expose whether it was the email or password that failed- just "In
 We re-issue a JWT on every login, with a fresh expiration.
 
 Step 5: Create an Auth Middleware
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+
+interface JwtPayload {
+userId: string;
+}
+// defines TS interface what our JWT payload should contain after verification.
+// In our case, when we signed tokens we embedded {userId:user.\_id}, so we expect to get back an object with userId:string
+
+export interface AuthRequest extends Request {
+userId?: string;
+}
+//
+
+export const requireAuth = (
+req: AuthRequest,
+res: Response,
+next: NextFunction
+) => {
+// 1) Grab the token from headers (you can also use cookies)
+const authHeader = req.headers.authorization;
+if (!authHeader?.startsWith("Bearer ")) {
+return res.status(401).json({ message: "No token provided" });
+}
+const token = authHeader.split(" ")[1];
+
+try {
+// 2) Verify token
+const payload = jwt.verify(
+token,
+process.env.JWT_SECRET as string
+) as JwtPayload;
+
+    // 3) Attach userId to the request object
+    req.userId = payload.userId;
+    next();
+
+} catch {
+return res.status(401).json({ message: "Invalid token" });
+}
+};
+
+A standard middleware always takes (req, res, next)
+
+try {
+const payload = jwt.verify(
+token,
+process.env.JWT_SECRET as string
+) as JwtPayload;
+jwt.verify(token, secret) checks the signature and expiration
+if token is invalid, it throws an error caught below.
+We cast the returned payload to our JwtPayload type so TS knows it has userId.
+
+    req.userId = payload.userId;
+    next();
+
+} catch {
+return res.status(401).json({ message: 'Invalid token' });
+}
+
+On success, we store payload.userId on req.userId
+Calling next() passes control to next handler
+On failure, we give back 401 unauthorized error.
+
+Flow upto auth
+connect to DB
+Define User Schema
+register: takes form info-> checks if email exists->hash Password->save to Database->sign token and give it back as response
+login: takes email and pw, checks if email exists(if no email exist, error), checks if pw match or not-> sign token and give it back as response
+
+What are we doing with the token we get as response from register and login?
+We save it to client localstorage or session storage
+
+authMiddleware: takes token from headers.authorization-> checks if starts with Bearer->extract token only->jwt.verify our token->call next()

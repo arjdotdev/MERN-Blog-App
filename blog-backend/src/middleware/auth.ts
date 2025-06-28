@@ -30,6 +30,12 @@ export const requireAuth = (
       token,
       process.env.JWT_SECRET as string
     ) as JwtPayload;
+    // console.log("payload", payload);
+    //      {
+    //   userId: '685f703df3e18e693bd228fc',
+    //   iat: 1751085411,
+    //   exp: 1751089011
+    // }
 
     // 3) Attach userId to the request object
     req.userId = payload.userId;

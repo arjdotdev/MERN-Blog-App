@@ -1,7 +1,8 @@
-import express from "express";
+import express, { Response } from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import authRoutes from "./routes/auth";
+import { AuthRequest, requireAuth } from "./middleware/auth";
 
 dotenv.config();
 
@@ -17,6 +18,10 @@ const PORT = process.env.PORT || 4000;
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "OK" });
+});
+
+app.get("/api/protected", requireAuth, (req: AuthRequest, res: Response) => {
+  res.json({ message: `Hello user ${req.userId}` });
 });
 
 app.listen(PORT, () => {
