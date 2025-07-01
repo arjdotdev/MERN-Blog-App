@@ -60,3 +60,80 @@ We render the built-in Provider component passing our state and functions as the
 export const useAuth = () => useContext(AuthContext);
 A small wrapper so other components can simply do:
 const { token, login, logout } = useAuth();
+
+Problem: Props Drilling
+Context API: (global state manager)
+It allows you to share state or data globally in React Application without using Props.
+
+Context API works in 4 steps:
+Create a Context
+Create a ContextProvider
+User the ContextProvider
+Consume the Context
+
+Example:
+Create the context:
+// ThemeContext.js
+import { createContext } from "react";
+
+export const ThemeContext = createContext(null);
+
+Create a Provider
+// ThemeProvider.js
+import { useState } from "react";
+import { ThemeContext } from "./ThemeContext";
+
+export const ThemeProvider = ({ children }) => {
+const [theme, setTheme] = useState("light");
+
+return (
+<ThemeContext.Provider value={{ theme, setTheme }}>
+{children}
+</ThemeContext.Provider>
+);
+};
+
+Use it in the app
+// App.js
+import { ThemeProvider } from "./ThemeProvider";
+import Page from "./Page";
+
+function App() {
+return (
+<ThemeProvider>
+<Page />
+</ThemeProvider>
+);
+}
+
+Consume the context
+// Page.js
+import { useContext } from "react";
+import { ThemeContext } from "./ThemeContext";
+
+function Page() {
+const { theme, setTheme } = useContext(ThemeContext);
+
+return (
+
+<div>
+<h1>Current theme: {theme}</h1>
+<button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+Toggle Theme
+</button>
+</div>
+);
+}
+
+TypeScript Concepts
+const AuthContext = createContext<AuthContextType>({..})
+
+The first mean, Generic Parameter. This tells TypeScript "our context value will always match the shape described by AuthContextType".
+AuthContext is not a object with that shape. So we can not do "AuthContext:AuthContextType"
+
+const [token, setToken]=useState<string|null>(()=>{return localStorage.getItem("token")})
+<string | null> is a TypeScript generic telling React "this piece of state can hold either a string or null."
+
+Why "const AuthContext: AuthContextType=createContext({...})" is wrong?
+The second mean, AuthContext is an object shaped like AuthContextType but in reality createContext<T>() returns a React.Context<T>.
+i.e. const AuthContext:React.Context<AuthContextType>=createContext<AuthContextType>()

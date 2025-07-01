@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import "./App.css";
-import { useAuth } from "./context/AuthContext";
+import { AuthContext } from "./context/AuthContext";
+// import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const { token, logout } = useAuth();
+  const { token, logout } = useContext(AuthContext);
   return (
     <>
       <h1 className="text-xl text-center">Blog Application</h1>

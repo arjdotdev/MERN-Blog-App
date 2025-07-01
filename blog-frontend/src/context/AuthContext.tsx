@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import { createContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   token: string | null;
@@ -7,11 +7,12 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>({
+export const AuthContext = createContext<AuthContextType>({
   token: null,
   login: () => {},
   logout: () => {},
 });
+console.log("AuthContext", AuthContext);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(() => {
@@ -44,4 +45,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 // 3️⃣ Custom hook for easy consumption
-export const useAuth = () => useContext(AuthContext);
+// export const useAuth = () => useContext(AuthContext);
