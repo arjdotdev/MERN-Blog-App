@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   token: string | null;
@@ -24,10 +24,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+      console.log("first useEffect run");
     } else {
       localStorage.removeItem("token");
     }
   }, [token]);
+  // useEffect is for the change of token by login and logout
 
   const login = (jwt: string) => {
     setToken(jwt);
@@ -45,4 +47,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 // 3️⃣ Custom hook for easy consumption
-// export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => useContext(AuthContext);

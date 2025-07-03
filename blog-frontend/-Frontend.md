@@ -137,3 +137,41 @@ const [token, setToken]=useState<string|null>(()=>{return localStorage.getItem("
 Why "const AuthContext: AuthContextType=createContext({...})" is wrong?
 The second mean, AuthContext is an object shaped like AuthContextType but in reality createContext<T>() returns a React.Context<T>.
 i.e. const AuthContext:React.Context<AuthContextType>=createContext<AuthContextType>()
+
+React Router Dom
+npm install react-router-dom
+npm install --save-dev @types/react-router-dom
+
+Wrap your application in main.tsx using "BrowserRouter"
+<StrictMode>
+<BrowserRouter>
+<AuthProvider>
+<App />
+</AuthProvider>
+</BrowserRouter>
+</StrictMode>
+BrowserRouter uses HTML5 History API under the hood to listen for changes to the URL. Without it, <Routes>, <Route>, <Link> cannot read or update the url.
+
+Defining Routes
+Key Words or Components: Routes > Route(path, element props), Navigate(props to)
+<Routes>
+<Route
+path="/"
+element={
+token
+? <Navigate to="/dashboard">
+: <Navigate to="/login">
+}
+
+> </Routes>
+
+Link component
+
+<Link to="/login" className="text-blue-600 underline">
+Log in
+</Link>
+
+Navigate
+const navigate = useNavigate();
+usage:
+navigate("/dashboard)

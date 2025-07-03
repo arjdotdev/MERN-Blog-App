@@ -1,18 +1,38 @@
 import { useContext } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { AuthContext } from "./context/AuthContext";
+import { Register } from "./pages/Register";
+import Login from "./pages/Login";
+import { Dashboard } from "./pages/Dashboard";
 // import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const { token, logout } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
+
   return (
-    <>
-      <h1 className="text-xl text-center">Blog Application</h1>
-      <div className="p-4">
-        <p>Current token: {token ?? "none"}</p>
-        {token && <button onClick={logout}>Log out</button>}
-      </div>
-    </>
+    <div className="max-w-xl mx-auto p-4">
+      <Routes>
+        <Route
+          path="/"
+          element={
+            token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/register"
+          element={token ? <Navigate to="/dashboard" /> : <Register />}
+        />
+        <Route
+          path="/login"
+          element={token ? <Navigate to="/dashboard" /> : <Login />}
+        />
+        <Route
+          path="/dashboard"
+          element={token ? <Dashboard /> : <Navigate to="/login" />}
+        />
+      </Routes>
+    </div>
   );
 }
 
